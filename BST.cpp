@@ -200,8 +200,62 @@ node* deleteNode(node* &root, int key){
 	}
 }
 
+bool isBST(node* root, int minV = INT_MIN, int maxV = INT_MAX){
+	if(root==NULL){
+		return true;
+	}
+	if(root->data >= minV && root->data <= maxV && isBST(root->left, minV, root->data) && isBST(root->right, root->data, maxV)){
+		return true;		
+	}	
+	return false;
+}
+
+class LinkedList{
+    public: 
+    node* head;
+    node* tail;
+};
+//flatten - convert to sorted linked list -> CB Save: 23093
+LinkedList flatten(node *root){
+    LinkedList l;
+    if(root==NULL){
+        l.head = l.tail = NULL;
+        return l;
+    }
+    //leaf node
+    if(root->left == NULL && root->right == NULL){
+        l.head = l.tail = root;
+        return l;
+    }
+    //left child only
+    if(root->left != NULL && root->right == NULL){
+        LinkedList leftLL = flatten(root->left);
+        leftLL.tail->right = root;
+        l.head = leftLL.head;
+        l.tail = root;
+        return l;
+    }
+    //right child only
+    if(root->left == NULL && root->right!=NULL){
+        LinkedList rightLL = flatten(root->right);
+        root->right = rightLL.head;
+        l.head = root;
+        l.tail = rightLL.tail;
+        return l;
+    }
+
+    //both sides, child present
+    LinkedList leftLL = flatten(root->left);
+    LinkedList rightLL = flatten(root->right);
+    leftLL.tail->right = root;
+    root->right = rightLL.head;
+    l.head = leftLL.head;
+    l.tail = rightLL.tail;
+    return l;
+}
+
 int main(){
-	node* root = NULL;
+	node* root = NULL; 
 	myPair bstParams;
 	int key;
 	cin>>root;
@@ -220,7 +274,22 @@ int main(){
 		cin>>key1;
 		root = deleteNode(root,key1);
 		cout<<root<<"\n";
+		
+	if(isBST(root)){
+		cout<<"\nBST\n";
+	}
+	else cout<<"\nNot a BST\n";
 
-	return 0;
+    LinkedList l = flatten(root);
+    node *temp = l.head;
+    while(temp!=NULL){
+        cout<<temp->data<<" --> ";
+        temp = temp->right;
+    }
+
+    cout<<"\n";
+	
+    return 0;
 }
 //5 3 4 2 1 8 9 7 3 -1
+
