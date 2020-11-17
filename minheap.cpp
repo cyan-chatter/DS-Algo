@@ -72,5 +72,7 @@ int main(){
 	}	
 }
 
+//16. Implement Priority Queue using MaxHeap: InsertQ(), DeleteQ(), DisplayHeap() are the functions to be implemented.
+//17. Design HeapSort() to sort array in ascending order.
 
 
